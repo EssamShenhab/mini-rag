@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from routes.base import base_router
+from src.routes.base import base_router
 
 app = FastAPI()
 
