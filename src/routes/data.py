@@ -52,6 +52,6 @@ async def upload_data(
 
     return JSONResponse(
             content={
-                "signal": ResponseSignal.FILE_UPLOADED_FAILED.value
+                "signal": ResponseSignal.FILE_UPLOADED_SUCCESS.value
             }
         )
