@@ -32,6 +32,7 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.mongo_conn.close()
 
+
 app.router.lifespan.on_startup.append(startup_db_client)
 app.router.lifespan.on_shutdown.append(shutdown_db_client)
 
