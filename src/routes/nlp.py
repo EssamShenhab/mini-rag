@@ -160,15 +160,15 @@ async def answer_rag(request: Request, project_id: str, search_request: SearchRe
     )
 
     answer, full_prompt, chat_history = nlp_controller.answer_rag_question(
-        project=project, query=search_request.text, limit=search_request.limit
+        project=project,
+        query=search_request.text,
+        limit=search_request.limit,
     )
 
     if not answer:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "signal": ResponseSignal.RAG_ANSWER_ERROR.value,
-            },
+            content={"signal": ResponseSignal.RAG_ANSWER_ERROR.value},
         )
 
     return JSONResponse(

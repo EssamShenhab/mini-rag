@@ -36,6 +36,9 @@ footer_prompt = Template(
     "\n".join(
         [
             "Na osnovu isključivo gore navedenih dokumenata, generiši odgovor za korisnika.",
+            "## Pitanje:",
+            "$query",
+            "",
             "## Odgovor:",
         ]
     )
