@@ -1,4 +1,3 @@
-from stores.llm.templates.locales.ar.rag import footer_prompt
 from .BaseController import BaseController
 from models.db_schemes import Project, DataChunk
 from stores.llm.LLMEnums import DocumentTypeEnum
@@ -30,24 +29,23 @@ class NLPController(BaseController):
         collection_info = self.vectordb_client.get_collection_info(
             collection_name=collection_name
         )
-        # This line convert the collection info object to json safe type
+
         return json.loads(json.dumps(collection_info, default=lambda x: x.__dict__))
 
     def index_into_vector_db(
         self,
         project: Project,
         chunks: List[DataChunk],
-        chuncks_ids: List[int],
+        chunks_ids: List[int],
         do_reset: bool = False,
     ):
 
-        # step 1: get collection name
+        # step1: get collection name
         collection_name = self.create_collection_name(project_id=project.project_id)
 
-        # step 2: manage items
+        # step2: manage items
         texts = [c.chunk_text for c in chunks]
         metadata = [c.chunk_metadata for c in chunks]
-
         vectors = [
             self.embedding_client.embed_text(
                 text=text, document_type=DocumentTypeEnum.DOCUMENT.value
@@ -55,30 +53,30 @@ class NLPController(BaseController):
             for text in texts
         ]
 
-        # step 3: create colection if not exists
+        # step3: create collection if not exists
         _ = self.vectordb_client.create_collection(
             collection_name=collection_name,
             embedding_size=self.embedding_client.embedding_size,
             do_reset=do_reset,
         )
 
-        # step 4: insert into vector db
+        # step4: insert into vector db
         _ = self.vectordb_client.insert_many(
             collection_name=collection_name,
             texts=texts,
             metadata=metadata,
             vectors=vectors,
-            record_ids=chuncks_ids,
+            record_ids=chunks_ids,
         )
 
         return True
 
     def search_vector_db_collection(self, project: Project, text: str, limit: int = 10):
 
-        # step 1: get collection name
+        # step1: get collection name
         collection_name = self.create_collection_name(project_id=project.project_id)
 
-        # step 2: get text embedding vector
+        # step2: get text embedding vector
         vector = self.embedding_client.embed_text(
             text=text, document_type=DocumentTypeEnum.QUERY.value
         )
@@ -86,7 +84,7 @@ class NLPController(BaseController):
         if not vector or len(vector) == 0:
             return False
 
-        # step 3: do semantic search
+        # step3: do semantic search
         results = self.vectordb_client.search_by_vector(
             collection_name=collection_name, vector=vector, limit=limit
         )
@@ -120,7 +118,7 @@ class NLPController(BaseController):
                     "document_prompt",
                     {
                         "doc_num": idx + 1,
-                        "chunk_text": doc.text,
+                        "chunk_text": self.generation_client.process_text(doc.text),
                     },
                 )
                 for idx, doc in enumerate(retrieved_documents)

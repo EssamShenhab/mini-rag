@@ -35,7 +35,7 @@ class OpenAIProvider(LLMInterface):
         self.enums = OpenAIEnums
         self.logger = logging.getLogger(__name__)
 
-    def set_generation_model(self, model_id):
+    def set_generation_model(self, model_id: str):
         self.generation_model_id = model_id
 
     def set_embedding_model(self, model_id: str, embedding_size: int):
@@ -52,8 +52,9 @@ class OpenAIProvider(LLMInterface):
         max_output_tokens: int = None,
         temperature: float = None,
     ):
+
         if not self.client:
-            self.logger.error("OpenAI client was not initialized")
+            self.logger.error("OpenAI client was not set")
             return None
 
         if not self.generation_model_id:
@@ -94,10 +95,10 @@ class OpenAIProvider(LLMInterface):
     def embed_text(self, text: str, document_type: str = None):
 
         if not self.client:
-            self.logger.error("OpenAI client was not initialized")
+            self.logger.error("OpenAI client was not set")
             return None
 
-        if self.embedding_model_id is None:
+        if not self.embedding_model_id:
             self.logger.error("Embedding model for OpenAI was not set")
             return None
 
@@ -112,10 +113,10 @@ class OpenAIProvider(LLMInterface):
             or len(response.data) == 0
             or not response.data[0].embedding
         ):
-            self.logger.error("Error while getting embedding text with OpenAI")
+            self.logger.error("Error while embedding text with OpenAI")
             return None
 
         return response.data[0].embedding
 
     def construct_prompt(self, prompt: str, role: str):
-        return {"role": role, "content": self.process_text(prompt)}
+        return {"role": role, "content": prompt}
