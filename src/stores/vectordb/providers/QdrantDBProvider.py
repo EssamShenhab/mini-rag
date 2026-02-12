@@ -3,7 +3,7 @@ from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import DistanceMethodEnums
 from typing import List
 import logging
-from models.db_schemes import RetreivedDocument
+from models.db_schemes import RetrievedDocument
 
 
 class QdrantDBProvider(VectorDBInterface):
@@ -162,7 +162,7 @@ class QdrantDBProvider(VectorDBInterface):
             return None
 
         return [
-            RetreivedDocument(
+            RetrievedDocument(
                 **{
                     "score": result.score,
                     "text": result.payload["text"],
