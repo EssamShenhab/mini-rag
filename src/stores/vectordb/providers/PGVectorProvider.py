@@ -82,12 +82,12 @@ class PGVectorProvider(VectorDBInterface):
                     count_sql, {"collection_name": collection_name}
                 )
 
-                teble_data = table_info.fetchone()
-                if not teble_data:
+                table_data = table_info.fetchone()
+                if not table_data:
                     return None
 
                 return {
-                    "table_data": dict(teble_data),
+                    "table_data": dict(table_data),
                     "record_count": record_count,
                 }
 
