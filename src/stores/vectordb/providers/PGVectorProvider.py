@@ -87,7 +87,7 @@ class PGVectorProvider(VectorDBInterface):
                     return None
 
                 return {
-                    "table_data": dict(table_data),
+                    "table_info": dict(table_data),
                     "record_count": record_count,
                 }
 
@@ -249,7 +249,7 @@ class PGVectorProvider(VectorDBInterface):
         )
         if not is_collection_existed:
             self.logger.error(
-                f"Can not search for a record in non-existed collection: {collection_name}"
+                f"Can not search for a records in non-existed collection: {collection_name}"
             )
             return False
 
