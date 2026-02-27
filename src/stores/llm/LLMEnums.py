@@ -6,6 +6,7 @@ class LLMEnums(Enum):
     GROK = "GROK"
     GEMINI = "GEMINI"
     COHERE = "COHERE"
+    JINA = "JINA"
 
 
 class OpenAIEnums(Enum):
