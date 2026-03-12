@@ -1,7 +1,10 @@
 from .BaseDataModel import BaseDataModel
 from .db_schemes import DataChunk
+from .enums.DataBaseEnum import DataBaseEnum
 from bson.objectid import ObjectId
-from sqlalchemy import delete, select, func
+from pymongo import InsertOne
+from sqlalchemy.future import select
+from sqlalchemy import func, delete
 
 
 class ChunkModel(BaseDataModel):
@@ -22,16 +25,15 @@ class ChunkModel(BaseDataModel):
                 session.add(chunk)
             await session.commit()
             await session.refresh(chunk)
-
         return chunk
 
     async def get_chunk(self, chunk_id: str):
+
         async with self.db_client() as session:
-            async with session.begin():
-                result = await session.execute(
-                    select(DataChunk).where(DataChunk.chunk_id == chunk_id)
-                )
-                chunk = result.scalar_one_or_none()
+            result = await session.execute(
+                select(DataChunk).where(DataChunk.chunk_id == chunk_id)
+            )
+            chunk = result.scalar_one_or_none()
         return chunk
 
     async def insert_many_chunks(self, chunks: list, batch_size: int = 100):
@@ -44,7 +46,7 @@ class ChunkModel(BaseDataModel):
             await session.commit()
         return len(chunks)
 
-    async def delete_chunks_by_project_id(self, project_id: int):
+    async def delete_chunks_by_project_id(self, project_id: ObjectId):
         async with self.db_client() as session:
             stmt = delete(DataChunk).where(DataChunk.chunk_project_id == project_id)
             result = await session.execute(stmt)
@@ -62,10 +64,11 @@ class ChunkModel(BaseDataModel):
                 .limit(page_size)
             )
             result = await session.execute(stmt)
-            chunks = result.scalars().all()
-        return chunks
+            records = result.scalars().all()
+        return records
 
     async def get_total_chunks_count(self, project_id: ObjectId):
+        total_count = 0
         async with self.db_client() as session:
             count_sql = select(func.count(DataChunk.chunk_id)).where(
                 DataChunk.chunk_project_id == project_id
