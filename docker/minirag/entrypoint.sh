@@ -6,5 +6,5 @@ cd /app/models/db_schemes/minirag/
 alembic upgrade head
 cd /app
 
-# Execute the CMD (uvicorn) as the final process
+echo "Starting FastAPI application..."
 exec "$@"
