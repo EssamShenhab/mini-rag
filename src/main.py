@@ -12,7 +12,7 @@ from utils.metrics import setup_metrics
 
 app = FastAPI()
 
-# Setup Promethues metrics
+# Setup Prometheus metrics
 setup_metrics(app)
 
 
