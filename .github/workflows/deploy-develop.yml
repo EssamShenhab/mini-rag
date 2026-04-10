@@ -1,0 +1,28 @@
+name: Deploy Main Branch to Server
+
+on:
+    push:
+        branches:
+            - develop
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Deploy via SSH
+              uses: appleboy/ssh-checkout@v1.0.0
+              with:
+                  host: ${{ secrets.SSH_MAIN_HOST_IP }} # Should change the key
+                  username: github_user
+                  key: ${{ secrets.SSH_MAIN_PRIVATE_KEY }} # Should change the key
+                  script: |
+                      cd /home/github_user/workspace/mini-rag
+                      git checkout develop
+                      git pull
+                      sudo systemctl restart minirag.service
+                      echo "Waiting..."
+                      sleep 5
