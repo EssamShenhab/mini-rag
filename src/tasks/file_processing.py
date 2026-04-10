@@ -182,6 +182,8 @@ async def _process_project_files(
             "signal": ResponseSignal.PROCESSING_SUCCESS.value,
             "inserted_chunks": no_records,
             "processed_files": no_files,
+            "project_id": project_id,
+            "do_reset": do_reset,
         }
 
     except Exception as e:
